@@ -19,14 +19,23 @@ end
 
 function update_fields(line::String, fields::Dict{String, String})
 	for key_value in split(line, " ")
-		key, value = split(key_value,":")
+		key, value = split(key_value, ":")
 		fields[key] = value
 	end
 end
 
-function validate_passport(fields::Dict{String, String})
+function validate_passport_1(fields::Dict{String, String})
+	for field in keys(mandatory_fields)
+		if !haskey(fields, field)
+			return false
+		end
+	end
+	return true
+end
+
+function validate_passport_2(fields::Dict{String, String})
 	for (field, validator) in pairs(mandatory_fields)
-		if !validator(get(fields, field,""))
+		if !validator(get(fields, field, ""))
 			return false
 		end
 	end
@@ -42,21 +51,19 @@ mandatory_fields = Dict{String, Function}(
 	"eyr" => x -> validate_year(x, 2020, 2030),
 	"byr" => x -> validate_year(x, 1920, 2002))
 
-
-function main1()
+function main(validation_func::Function)
 	valid_passports::Int = 0
 	fields = Dict{String, String}()
 	for line in readlines("day_4.txt")
 		if line == ""
-			valid_passports += validate_passport(fields)
+			valid_passports += validation_func(fields)
 			fields = Dict{String, String}()
 		else
 			update_fields(line, fields)
 		end
 	end
-	valid_passports += validate_passport(fields)
+	valid_passports += validation_func(fields)
 	valid_passports
 end
-
-
-main1()
+	
+main(validate_passport_2)
