@@ -49,7 +49,6 @@ function main1()
 	for line in readlines("day_4.txt")
 		if line == ""
 			valid_passports += validate_passport(fields)
-			println(fields, "  ", validate_passport(fields))
 			fields = Dict{String, String}()
 		else
 			update_fields(line, fields)
