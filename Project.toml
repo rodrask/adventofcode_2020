@@ -1,3 +1,4 @@
 [deps]
+DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
 Mods = "7475f97c-0381-53b1-977b-4c60186c8d62"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
