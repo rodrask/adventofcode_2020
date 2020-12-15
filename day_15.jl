@@ -7,7 +7,6 @@ end
 
 function move!(state::GameState)
     next_move = state.last_move_n - get(state.history, state.last_move, state.last_move_n)
-    # println("Turn $(state.last_move_n+1) search $(state.last_move) in hist $(get(state.history, state.last_move,-1)) next_move $next_move")
     state.history[state.last_move] = state.last_move_n
     state.last_move = next_move
     state.last_move_n += 1
