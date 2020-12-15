@@ -18,32 +18,19 @@ struct MemSet <: Command
     end
 end
 
-struct FloatMask <: Command
-    mask::BitVector
-    values::BitVector
-    float_positions::Vector
-
-    function FloatMask(mask_str::AbstractString)
-        mask = trues(MEM_SIZE)
-        values = falses(MEM_SIZE)
-        float_idxs = []
-        for (idx,ch) in enumerate(reverse(mask_str))
-            if ch == '1'
-                values[idx] = 1
-                mask[idx] = 0
-            elseif ch == '0'
-                mask[idx] = 0
-            else
-                push!(float_idxs, idx)
+struct FloatMemSet <: Command 
+    address::BitVector
+    value::Int
+    function FloatMemSet(address::AbstractString, value::AbstractString)
+        address_bv = falses(MEM_SIZE)
+        for (idx,d) in enumerate(reverse(bitstring(parse(UInt,address))))
+            if d == '1'
+                address_bv[idx] = 1
             end
         end
-        new(mask, values, float_idxs)
+        new(address_bv, parse(Int,value))
     end
 end
-
-function values_variants(mask::FloatMask)
-    init_value = mask.values
-    0:(2^length(mask.float_positions)-1) .|> d-> digits(d;base=2)
 
 struct Mask <: Command 
     mask::BitVector
@@ -67,13 +54,47 @@ struct Mask <: Command
         new(mask, values)
     end
 end
+struct FloatMask <: Command
+    values::BitVector
+    float_positions::Vector
+
+    function FloatMask()
+        new(falses(MEM_SIZE),[])
+    end
+
+    function FloatMask(mask_str::AbstractString)
+        values = falses(MEM_SIZE)
+        float_idxs = []
+        for (idx,ch) in enumerate(reverse(mask_str))
+            if ch == '1'
+                values[idx] = 1
+            elseif ch == 'X'
+                push!(float_idxs, idx)
+            else
+                
+            end
+        end
+        new(values, float_idxs)
+    end
+end
+
+function address_variants(init_pattern::BitVector, float_idxs::Vector)
+    result = []
+    max_value = 2^(length(float_idxs)) - 1
+    for d in 0:max_value
+        current_digits = digits(d;base=2,pad=max_value)
+        current_address = copy(init_pattern)
+        for (idx, value) in zip(float_idxs, current_digits)
+            current_address[idx] = value
+        end
+        push!(result, current_address)
+    end
+    result
+end
 
 mutable struct Memory
-    mask::Union{Mask, FloatMask}
+    mask
     mem_items::Dict
-    function Memory()
-        new(Mask(), Dict())
-    end
 end
 
 bit2int(arr) = sum(((i, x),) -> Int(x) << ((i-1) * sizeof(x)), enumerate(arr.chunks))
@@ -88,39 +109,43 @@ function apply!(command::MemSet, mem::Memory)
     mem.mem_items[command.address] = value
 end
 
+function apply!(command::FloatMemSet, mem::Memory)
+    init_address = command.address .| mem.mask.values
+    for a in address_variants(init_address, mem.mask.float_positions)
+        mem.mem_items[bit2int(a)] = command.value
+    end
+end
 
-function parse_line(line; part1::Bool=true)
+
+
+function parse_line(line, mask_constructor, mem_constructor)
     mask_match = match(MASK_REGEX, line)
     if mask_match !== nothing
-        if part1
-            return Mask(mask_match.captures[1])
-        else
-            return FloatMask(mask_match.captures[1])
-        end
+        return mask_constructor(mask_match.captures[1])
     end
     mem_match = match(MEM_REGEX, line)
     if mem_match !== nothing
-        return MemSet(mem_match.captures[1], mem_match.captures[2])
+        return mem_constructor(mem_match.captures[1], mem_match.captures[2])
     end
 end
 
 
 function main()
-    memory = Memory()
+    memory = Memory(Mask(), Dict())
     for line in readlines("day_14.txt")
-        command = parse_line(line)
+        command = parse_line(line, Mask, MemSet)
         apply!(command, memory)
     end
     values(memory.mem_items) .|> bit2int |> sum
 end
 
 function main2()
-    memory = Memory()
-    for line in readlines("day_14_test.txt")
-        command = parse_line(line;part1=false)
-        a(command)
+    memory = Memory(FloatMask(), Dict())
+    for line in readlines("day_14.txt")
+        command = parse_line(line, FloatMask, FloatMemSet)
+        apply!(command, memory)
     end
-    # values(memory.mem_items) .|> bit2int |> sum
+    values(memory.mem_items) |> sum
 end
 
-main2()
+main()
