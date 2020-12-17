@@ -70,8 +70,6 @@ struct FloatMask <: Command
                 values[idx] = 1
             elseif ch == 'X'
                 push!(float_idxs, idx)
-            else
-                
             end
         end
         new(values, float_idxs)
@@ -93,16 +91,13 @@ function address_variants(init_pattern::BitVector, float_idxs::Vector)
 end
 
 mutable struct Memory
-    mask
+    mask::Union{Mask,FloatMask}
     mem_items::Dict
 end
 
 bit2int(arr) = sum(((i, x),) -> Int(x) << ((i-1) * sizeof(x)), enumerate(arr.chunks))
 
-apply!(command::Mask, mem::Memory) = mem.mask = command
-
-apply!(command::FloatMask, mem::Memory) = mem.mask = command
-
+apply!(command::Union{Mask,FloatMask}, mem::Memory) = mem.mask = command
 
 function apply!(command::MemSet, mem::Memory)
     value = (command.value .& mem.mask.mask) .| mem.mask.values
@@ -115,8 +110,6 @@ function apply!(command::FloatMemSet, mem::Memory)
         mem.mem_items[bit2int(a)] = command.value
     end
 end
-
-
 
 function parse_line(line, mask_constructor, mem_constructor)
     mask_match = match(MASK_REGEX, line)
@@ -148,4 +141,4 @@ function main2()
     values(memory.mem_items) |> sum
 end
 
-main()
+main2()
