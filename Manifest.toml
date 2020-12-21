@@ -6,6 +6,11 @@ git-tree-sha1 = "42c42f2221906892ceb765dbcb1a51deeffd86d7"
 uuid = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
 version = "2.3.0"
 
+[[AutoHashEquals]]
+git-tree-sha1 = "45bb6705d93be619b81451bb2006b7ee5d4e4453"
+uuid = "15f4f7f2-30c1-5605-9d31-71845cf9641f"
+version = "0.2.0"
+
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
@@ -79,6 +84,11 @@ git-tree-sha1 = "e4ea1ff49413228f18e8db1167be0dcdfbfe0d75"
 uuid = "7475f97c-0381-53b1-977b-4c60186c8d62"
 version = "1.2.4"
 
+[[Nullables]]
+git-tree-sha1 = "8f87854cc8f3685a60689d8edecaa29d2251979b"
+uuid = "4d1e1d77-625e-5b40-9113-a560ec7a8ecd"
+version = "1.0.0"
+
 [[OffsetArrays]]
 deps = ["Adapt"]
 git-tree-sha1 = "45d5e495ab559357aee8cb1dfb8c12b0787d4545"
@@ -89,6 +99,18 @@ version = "1.4.1"
 git-tree-sha1 = "cf59cfed2e2c12e8a2ff0a4f1e9b2cd8650da6db"
 uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
 version = "1.3.2"
+
+[[PEG]]
+deps = ["Test"]
+git-tree-sha1 = "c62b3f15184a24960131cf7e1b63dfbc6beb8040"
+uuid = "12d937ae-5f68-53be-93c9-3a6f997a20a8"
+version = "1.0.0"
+
+[[ParserCombinator]]
+deps = ["AutoHashEquals", "Nullables", "Printf", "Test"]
+git-tree-sha1 = "370b7fcf9ee754bf47b86389caded06a140fffcc"
+uuid = "fae87a5f-d1ad-5cf0-8f61-c941e1580b46"
+version = "2.0.0"
 
 [[Pkg]]
 deps = ["Dates", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "UUIDs"]
@@ -138,6 +160,12 @@ deps = ["DataAPI", "DataStructures", "LinearAlgebra", "Missings", "Printf", "Ran
 git-tree-sha1 = "7bab7d4eb46b225b35179632852b595a3162cb61"
 uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 version = "0.33.2"
+
+[[StringParserPEG]]
+deps = ["InteractiveUtils", "Test"]
+git-tree-sha1 = "c29fb76a8890fdd9e8a63b188c23ab65b9e8fb4c"
+uuid = "b0c8ea40-1aeb-11ea-0927-b51424bf2dfe"
+version = "1.1.0"
 
 [[Test]]
 deps = ["Distributed", "InteractiveUtils", "Logging", "Random"]
