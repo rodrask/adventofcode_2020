@@ -8,10 +8,6 @@ function load_init(path)
     transpose(hcat(rows...))
 end
 
-# function n_neib(world, pos)
-    
-# end
-
 function step(world)
     next_world = similar(world)
     R = CartesianIndices(world)
